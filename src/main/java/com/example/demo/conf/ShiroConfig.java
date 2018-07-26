@@ -98,12 +98,14 @@ public class ShiroConfig {
         // 公共路径
         map.put("/login", "anon");
         map.put("/register", "anon");
+
+        //map.put("/home","authc,roles[admin],perms[/home]");   // 配置这个，登陆之后，只有角色为admin才能访问，而你只有user角色，所以会跳转的无权限页面
         //map.put("/*", "anon");
 
         // 登出,项目中没有/logout路径,因为shiro是过滤器,而SpringMVC是Servlet,Shiro会先执行
         map.put("/logout", "logout");
 
-        // 授权
+        // 授权(必须登录，并且角色为user才能访问)
         map.put("/user/**", "authc,roles[user]");
         map.put("/admin/**", "authc,roles[admin]");
 

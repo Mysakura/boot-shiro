@@ -6,6 +6,7 @@ import com.example.demo.common.response.BaseResponse;
 import com.example.demo.service.UserService;
 import org.apache.shiro.SecurityUtils;
 import org.apache.shiro.authc.UsernamePasswordToken;
+import org.apache.shiro.authz.annotation.RequiresRoles;
 import org.apache.shiro.subject.Subject;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.RequestBody;
@@ -30,6 +31,11 @@ public class SimpleController {
         return new ModelAndView("index");
     }
 
+    @RequestMapping("/unauthorized")
+    public ModelAndView unauthorized(){
+        return new ModelAndView("unauthorized");
+    }
+
     @RequestMapping("/login")
     public BaseResponse<String> login(@RequestBody User user){
         BaseResponse<String> response = new BaseResponse<>(0,"登陆成功");
@@ -37,6 +43,7 @@ public class SimpleController {
         UsernamePasswordToken token = new UsernamePasswordToken(
                 user.getUsername(), user.getPassword());
         subject.login(token);
+        System.out.println(subject.hasRole("user"));    // 判断是否含有某个角色
         response.setData("/home");
         return response;
     }
@@ -48,6 +55,7 @@ public class SimpleController {
     }
 
     @RequestMapping("/home")
+    @RequiresRoles("user")
     public ModelAndView home(){
         ModelAndView mv = new ModelAndView("home");
         mv.addObject("users", TempStorage.getInstance().getMap());
